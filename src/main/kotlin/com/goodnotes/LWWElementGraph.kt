@@ -6,14 +6,9 @@ class LWWElementGraph<T>(
     private val vertices: LWWElementSet<T> = LWWElementSet(),
     private val edges: LWWElementSet<Pair<T, T>> = LWWElementSet()
 ) {
+    fun addVertex(value: T, timestamp: Int) = vertices.addElement(value, timestamp)
 
-    fun addVertex(value: T, timestamp: Int) {
-        vertices.addElement(value, timestamp)
-    }
-
-    fun removeVertex(value: T, timestamp: Int) {
-        vertices.removeElement(value, timestamp)
-    }
+    fun removeVertex(value: T, timestamp: Int) = vertices.removeElement(value, timestamp)
 
     fun addEdge(source: T, destination: T, timestamp: Int) {
         if (!vertices.hasElement(source) || !vertices.hasElement(destination)) {
@@ -22,13 +17,10 @@ class LWWElementGraph<T>(
         edges.addElement(source to destination, timestamp)
     }
 
-    fun removeEdge(source: T, destination: T, timestamp: Int) {
+    fun removeEdge(source: T, destination: T, timestamp: Int) =
         edges.removeElement(source to destination, timestamp)
-    }
 
-    fun hasVertex(value: T): Boolean {
-        return vertices.hasElement(value)
-    }
+    fun hasVertex(value: T): Boolean = vertices.hasElement(value)
 
     fun getAdjacent(value: T): List<T> =
         edges.getElements().filter { it.first == value }.map { it.second }
@@ -57,11 +49,9 @@ class LWWElementGraph<T>(
         return path
     }
 
-    fun mergeWith(otherGraph: LWWElementGraph<T>): LWWElementGraph<T> {
-        return LWWElementGraph(
-            vertices.mergeWith(otherGraph.vertices), edges.mergeWith(otherGraph.edges)
-        )
-    }
+    fun mergeWith(otherGraph: LWWElementGraph<T>): LWWElementGraph<T> = LWWElementGraph(
+        vertices.mergeWith(otherGraph.vertices), edges.mergeWith(otherGraph.edges)
+    )
 
     override fun equals(other: Any?): Boolean {
         if (other !is LWWElementGraph<*>) return false
@@ -73,5 +63,4 @@ class LWWElementGraph<T>(
         result = 31 * result + edges.hashCode()
         return result
     }
-
 }
