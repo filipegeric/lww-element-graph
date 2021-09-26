@@ -1,5 +1,7 @@
 package com.goodnotes
 
+import java.util.Stack
+
 class LWWElementGraph<T>(
     private val vertices: LWWElementSet<T> = LWWElementSet(),
     private val edges: LWWElementSet<Pair<T, T>> = LWWElementSet()
@@ -32,7 +34,27 @@ class LWWElementGraph<T>(
         edges.getElements().filter { it.first == value }.map { it.second }
 
     fun getPathBetweenVertices(source: T, destination: T): List<T> {
-        TODO()
+        if (!hasVertex(source) || !hasVertex(destination)) {
+            throw Exception("Both source and destination must be in graph")
+        }
+        if (source == destination) return listOf(source)
+
+        return getPathRecursive(source, destination, mutableSetOf(), Stack<T>()).toList()
+    }
+
+    private fun getPathRecursive(
+        source: T, destination: T, visited: MutableSet<T>, path: Stack<T>
+    ): Stack<T> {
+        visited.add(source)
+        path.add(source)
+        if (source == destination) return path
+        for (vertex in getAdjacent(source)) {
+            if (visited.contains(vertex)) continue
+            val p = getPathRecursive(vertex, destination, visited, path)
+            if (p.lastElement() == destination) return p
+        }
+        path.pop()
+        return path
     }
 
     fun mergeWith(otherGraph: LWWElementGraph<T>): LWWElementGraph<T> {

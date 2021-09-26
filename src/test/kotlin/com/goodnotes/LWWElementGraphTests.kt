@@ -81,4 +81,67 @@ class LWWElementGraphTests {
 
         assertEquals(listOf("Hannah"), adjacent)
     }
+
+    @Test
+    fun `getPathBetweenVertices returns just one vertex if source is equal to destination`() {
+        val graph = LWWElementGraph<String>().apply {
+            addVertex("John", 10)
+            addVertex("Anna", 11)
+            addEdge("John", "Anna", 12)
+        }
+
+        val path = graph.getPathBetweenVertices("John", "John")
+        assertEquals(listOf("John"), path)
+    }
+
+    @Test
+    fun `getPathBetweenVertices throws exception if source or destination is not in graph`() {
+        val graph = LWWElementGraph<String>().apply {
+            addVertex("John", 10)
+            addVertex("Anna", 11)
+            addEdge("John", "Anna", 12)
+        }
+        assertThrows(Exception::class.java) {
+            graph.getPathBetweenVertices("Jane", "John")
+        }
+    }
+
+    @Test
+    fun `getPathBetweenVertices returns empty list if there is no path between source and destination`() {
+        val graph = LWWElementGraph<String>().apply {
+            addVertex("John", 10)
+            addVertex("Anna", 11)
+            addVertex("Jane", 11)
+            addEdge("John", "Anna", 12)
+            addEdge("Jane", "Anna", 12)
+        }
+
+        val path = graph.getPathBetweenVertices("John", "Jane")
+
+        assertEquals(emptyList<String>(), path)
+    }
+
+    @Test
+    fun `getPathBetweenVertices returns path`() {
+        val graph = LWWElementGraph<String>().apply {
+            addVertex("1", 10)
+            addVertex("2", 10)
+            addVertex("3", 10)
+            addVertex("4", 10)
+            addVertex("5", 10)
+            addVertex("6", 10)
+            addEdge("1", "2", 12)
+            addEdge("1", "3", 12)
+            addEdge("3", "2", 12)
+            addEdge("2", "4", 12)
+            addEdge("2", "5", 12)
+            addEdge("4", "5", 12)
+            addEdge("5", "3", 12)
+            addEdge("5", "6", 12)
+        }
+
+        val path = graph.getPathBetweenVertices("1", "6")
+
+        assertEquals(listOf("1", "2", "4", "5", "6"), path)
+    }
 }
